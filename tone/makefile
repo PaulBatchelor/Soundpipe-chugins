@@ -3,7 +3,7 @@
 CHUGIN_NAME=Tone
 
 # all of the c/cpp files that compose this chugin
-C_MODULES= tone_dsp.c
+C_MODULES= tone.c base.c 
 CXX_MODULES=Tone.cpp
 
 # where the chuck headers are

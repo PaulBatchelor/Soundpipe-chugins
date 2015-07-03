@@ -2,10 +2,11 @@
 
 #include "chuck_dl.h"
 #include "chuck_def.h"
-
 #include <stdio.h>
 #include <limits.h>
-#include <soundpipe.h>
+extern "C" {
+#include "tone.h"
+}
 
 CK_DLL_CTOR(tone_ctor);
 CK_DLL_DTOR(tone_dtor);
@@ -27,6 +28,7 @@ struct ToneData {
 struct ToneData {
     float foo;
     sp_data *sp;
+    sp_tone *tone;
 };
 
 static ToneData global_data;
@@ -58,14 +60,14 @@ CK_DLL_QUERY(Bitcrusher)
 CK_DLL_CTOR(tone_ctor)
 {
     OBJ_MEMBER_INT(SELF, tone_data_offset) = 0;
-    
-    
+   
     ToneData * data = new ToneData;
-    
-    //p_create(&data->sp);
+    sp_create(&data->sp);
+    //test_func(&data->sp);
+    //sp_create(&data->sp);
     //data->sp->sr = API->vm->get_srate();
     //sp_tone_create(&data->tone);
-    //sp_tone_init(data->sp, data->tone);
+    data->sp->sr = 44100;
     
     OBJ_MEMBER_INT(SELF, tone_data_offset) = (t_CKINT) data;
 }
@@ -77,6 +79,7 @@ CK_DLL_DTOR(tone_dtor)
     {
         //sp_tone_destroy(&data->tone);
         //sp_destroy(&data->sp);
+
         delete data;
         OBJ_MEMBER_INT(SELF, tone_data_offset) = 0;
         data = NULL;
