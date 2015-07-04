@@ -1,10 +1,10 @@
 
 # chugin name
-CHUGIN_NAME=tone
+CHUGIN_NAME=butlp
 
 # all of the c/cpp files that compose this chugin
-C_MODULES= ../modules/base.c ../modules/tone.c
-CXX_MODULES=tone.cpp
+C_MODULES= ../modules/base.c ../modules/butter.c
+CXX_MODULES=butlp.cpp
 
 # where the chuck headers are
 CK_SRC_PATH?=../chuck/include/

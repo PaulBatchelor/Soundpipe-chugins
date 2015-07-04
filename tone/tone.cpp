@@ -1,11 +1,10 @@
-
-
 #include "chuck_dl.h"
 #include "chuck_def.h"
 #include <stdio.h>
 #include <limits.h>
-extern "C" {
-#include "tone.h"
+
+extern "C"{
+#include "soundpipe.h"
 }
 
 CK_DLL_CTOR(tone_ctor);
@@ -17,21 +16,12 @@ CK_DLL_MFUN(tone_getCutoff);
 CK_DLL_TICK(tone_tick);
 
 t_CKINT tone_data_offset = 0;
-/*
-struct ToneData {
-    float foo;
-    sp_data *sp;
-    sp_tone *tone;
-};
-*/
 
 struct ToneData {
     float foo;
     sp_data *sp;
     sp_tone *tone;
 };
-
-static ToneData global_data;
 
 CK_DLL_QUERY(Bitcrusher)
 {
@@ -63,12 +53,10 @@ CK_DLL_CTOR(tone_ctor)
    
     ToneData * data = new ToneData;
     sp_create(&data->sp);
-    //test_func(&data->sp);
-    //sp_create(&data->sp);
-    //data->sp->sr = API->vm->get_srate();
-    //sp_tone_create(&data->tone);
-    data->sp->sr = 44100;
-    
+    data->sp->sr = API->vm->get_srate();
+    sp_tone_create(&data->tone);
+    sp_tone_init(data->sp, data->tone);
+       
     OBJ_MEMBER_INT(SELF, tone_data_offset) = (t_CKINT) data;
 }
 
@@ -77,8 +65,8 @@ CK_DLL_DTOR(tone_dtor)
     ToneData * data = (ToneData *) OBJ_MEMBER_INT(SELF, tone_data_offset);
     if(data)
     {
-        //sp_tone_destroy(&data->tone);
-        //sp_destroy(&data->sp);
+        sp_tone_destroy(&data->tone);
+        sp_destroy(&data->sp);
 
         delete data;
         OBJ_MEMBER_INT(SELF, tone_data_offset) = 0;
@@ -90,22 +78,20 @@ CK_DLL_TICK(tone_tick)
 {
     ToneData * data = (ToneData *) OBJ_MEMBER_INT(SELF, tone_data_offset);
     
-    *out = in;
-
+    sp_tone_compute(data->sp, data->tone, &in, out);
     return TRUE;
 }
 
 CK_DLL_MFUN(tone_setCutoff)
 {
     ToneData * data = (ToneData *) OBJ_MEMBER_INT(SELF, tone_data_offset);
-    // TODO: sanity check
-    data->foo = GET_NEXT_FLOAT(ARGS);
-    RETURN->v_float = data->foo;
+    data->tone->hp = GET_NEXT_FLOAT(ARGS);
+    RETURN->v_float = data->tone->hp;
 }
 
 CK_DLL_MFUN(tone_getCutoff)
 {
     ToneData * data = (ToneData *) OBJ_MEMBER_INT(SELF, tone_data_offset);
-    RETURN->v_float = data->foo;
+    RETURN->v_float = data->tone->hp;
 }
 

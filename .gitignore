@@ -1,0 +1,5 @@
+soundpipe.h
+modules
+*.swp
+*.o
+*.chug
