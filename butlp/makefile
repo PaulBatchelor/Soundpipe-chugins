@@ -7,7 +7,7 @@ C_MODULES= ../modules/base.c ../modules/butter.c
 CXX_MODULES=butlp.cpp
 
 # where the chuck headers are
-CK_SRC_PATH?=../chuck/include/
+CK_SRC_PATH?=../include/
 
 # ---------------------------------------------------------------------------- #
 # you won't generally need to change anything below this line for a new chugin #

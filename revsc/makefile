@@ -1,4 +1,3 @@
-
 # chugin name
 CHUGIN_NAME=revsc
 
@@ -7,7 +6,7 @@ C_MODULES= ../modules/revsc.c ../modules/base.c
 CXX_MODULES=revsc.cpp
 
 # where the chuck headers are
-CK_SRC_PATH?=../chuck/include/
+CK_SRC_PATH?=../include/
 
 # ---------------------------------------------------------------------------- #
 # you won't generally need to change anything below this line for a new chugin #
