@@ -19,6 +19,10 @@ CK_DLL_MFUN(tenv_getHold);
 CK_DLL_MFUN(tenv_setRelease);
 CK_DLL_MFUN(tenv_getRelease);
 
+
+CK_DLL_MFUN(tenv_setMode);
+CK_DLL_MFUN(tenv_getMode);
+
 CK_DLL_MFUN(tenv_trig);
 
 CK_DLL_TICK(tenv_tick);
@@ -29,6 +33,7 @@ struct TenvData {
     sp_data *sp;
     sp_tenv *tenv;
     SPFLOAT trig;
+    SPFLOAT mode;
 };
 
 CK_DLL_QUERY(Butlp)
@@ -53,6 +58,10 @@ CK_DLL_QUERY(Butlp)
     QUERY->add_mfun(QUERY, tenv_setRelease, "float", "rel");
     QUERY->add_arg(QUERY, "float", "arg");
     QUERY->add_mfun(QUERY, tenv_getRelease, "float", "rel");
+    
+    QUERY->add_mfun(QUERY, tenv_setMode, "float", "mode");
+    QUERY->add_arg(QUERY, "float", "arg");
+    QUERY->add_mfun(QUERY, tenv_getMode, "float", "mode");
     
     QUERY->add_mfun(QUERY, tenv_trig, "void", "trig");
     
@@ -96,7 +105,13 @@ CK_DLL_TICK(tenv_tick)
 {
     TenvData * data = (TenvData *) OBJ_MEMBER_INT(SELF, tenv_data_offset);
     data->tenv->in = in;
-    sp_tenv_compute(data->sp, data->tenv, &data->trig, out);
+    
+    if(data->mode) {
+        sp_tenv_compute(data->sp, data->tenv, &data->trig, out);
+    } else {
+        sp_tenv_compute(data->sp, data->tenv, &in, out);
+    }
+    
     data->trig = 0;
     return TRUE;
 }
@@ -139,6 +154,20 @@ CK_DLL_MFUN(tenv_getRelease)
 {
     TenvData * data = (TenvData *) OBJ_MEMBER_INT(SELF, tenv_data_offset);
     RETURN->v_float = data->tenv->rel;
+}
+
+CK_DLL_MFUN(tenv_setMode)
+{
+    TenvData * data = (TenvData *) OBJ_MEMBER_INT(SELF, tenv_data_offset);
+    data->mode = GET_NEXT_FLOAT(ARGS); 
+    data->tenv->sigmode = data->mode;
+    RETURN->v_float = data->tenv->sigmode;
+}
+
+CK_DLL_MFUN(tenv_getMode)
+{
+    TenvData * data = (TenvData *) OBJ_MEMBER_INT(SELF, tenv_data_offset);
+    RETURN->v_float = data->tenv->sigmode;
 }
 
 CK_DLL_MFUN(tenv_trig)
