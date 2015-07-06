@@ -15,3 +15,4 @@ mv foo.cpp $NAME.cpp
 sed -i s/foo/$NAME/g $NAME.cpp
 sed -i s/FooData/$DATA/g $NAME.cpp
 sed -i s/Foo/$CHUCKNAME/g $NAME.cpp 
+cd ..
