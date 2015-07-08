@@ -130,13 +130,9 @@ CK_DLL_MFUN(lsamp_select)
                 data->trig = 1;
             }
         } else {
-            if(lsamp_change_sample(data->ld, data->lh, 
-                lsamp_rowid(data->ld, keyword))) {
-                data->selected = 1;    
-                data->trig = 1;
-            } else {
-                data->selected = 0;
-            }
+            data->lsamp->rowid = lsamp_rowid(data->ld, keyword);
+            data->selected = 1;    
+            data->trig = 1;
         }
     }
 }
