@@ -106,7 +106,7 @@ CK_DLL_TICK(tenv_tick)
     TenvData * data = (TenvData *) OBJ_MEMBER_INT(SELF, tenv_data_offset);
     data->tenv->in = in;
     
-    if(data->mode) {
+    if(data->tenv->sigmode = 1) {
         sp_tenv_compute(data->sp, data->tenv, &data->trig, out);
     } else {
         sp_tenv_compute(data->sp, data->tenv, &in, out);
@@ -159,8 +159,7 @@ CK_DLL_MFUN(tenv_getRelease)
 CK_DLL_MFUN(tenv_setMode)
 {
     TenvData * data = (TenvData *) OBJ_MEMBER_INT(SELF, tenv_data_offset);
-    data->mode = GET_NEXT_FLOAT(ARGS); 
-    data->tenv->sigmode = data->mode;
+    data->tenv->sigmode = GET_NEXT_FLOAT(ARGS);
     RETURN->v_float = data->tenv->sigmode;
 }
 
