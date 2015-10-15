@@ -131,6 +131,7 @@ CK_DLL_MFUN(prop_parseString)
     const char * str = ckstring->str.c_str();
     if(!data->parsed) {
         data->parsed = 1;
-        prop_parse(data->prop, str);        
+        plumber_parse_string(&data->pd, str);
+        //prop_parse(data->prop, str);        
     }
 }

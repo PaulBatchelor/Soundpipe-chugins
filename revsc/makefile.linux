@@ -1,6 +1,7 @@
 CHUGIN_PATH=/usr/lib/chuck
 
 FLAGS=-D__LINUX_ALSA__ -D__PLATFORM_LINUX__ -I$(CK_SRC_PATH) -fPIC 
+FLAGS += -DSPFLOAT=float -DSP_OK=1 -DSP_NOT_OK=1
 LDFLAGS=-shared -lstdc++ 
 LD=gcc
 CXX=g++
