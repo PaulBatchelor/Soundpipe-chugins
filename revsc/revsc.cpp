@@ -4,7 +4,7 @@
 #include <limits.h>
 
 extern "C" {
-    #include "sp_revsc.h"
+    #include "soundpipe.h"
 }
 
 CK_DLL_CTOR(revsc_ctor);
@@ -24,6 +24,7 @@ CK_DLL_TICKF(revsc_tick);
 t_CKINT revsc_data_offset = 0;
 
 struct RevscData {
+    sp_data *sp;
     sp_revsc *revsc;
     SAMPLE mix;
 };
@@ -68,9 +69,9 @@ CK_DLL_CTOR(revsc_ctor)
     OBJ_MEMBER_INT(SELF, revsc_data_offset) = 0;
    
     RevscData * data = new RevscData;
-    //sp_create(&data->sp); data->sp->sr = API->vm->get_srate();
+    sp_create(&data->sp); data->sp->sr = API->vm->get_srate();
     sp_revsc_create(&data->revsc);
-    sp_revsc_init(API->vm->get_srate(), data->revsc);
+    sp_revsc_init(data->sp, data->revsc);
     data->mix = 0.5;
     OBJ_MEMBER_INT(SELF, revsc_data_offset) = (t_CKINT) data;
 }
@@ -80,8 +81,8 @@ CK_DLL_DTOR(revsc_dtor)
     RevscData * data = (RevscData *) OBJ_MEMBER_INT(SELF, revsc_data_offset);
     if(data)
     {
+        sp_destroy(&data->sp);
         sp_revsc_destroy(&data->revsc);
-
         delete data;
         OBJ_MEMBER_INT(SELF, revsc_data_offset) = 0;
         data = NULL;
@@ -93,7 +94,7 @@ CK_DLL_TICKF(revsc_tick)
     RevscData * data = (RevscData *) OBJ_MEMBER_INT(SELF, revsc_data_offset);
     SPFLOAT outL, outR;
     
-    sp_revsc_compute(data->revsc, in, in, &outL, &outR);
+    sp_revsc_compute(data->sp, data->revsc, in, in, &outL, &outR);
     out[0] = outL * data->mix + *in * (1 - data->mix);
     out[1] = outR * data->mix + *in * (1 - data->mix);
     return TRUE;
